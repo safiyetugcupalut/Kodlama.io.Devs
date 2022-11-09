@@ -1,16 +1,24 @@
 package kodlama.io.Kodlama.io.Devs.business.concretes;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kodlama.io.Kodlama.io.Devs.business.requests.DeleteLanguageRequest;
 import kodlama.io.Kodlama.io.Devs.business.abstracts.LanguageService;
+import kodlama.io.Kodlama.io.Devs.business.requests.UpdateLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.requests.CreateLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.responses.GetAllLanguagesResponse;
+import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdLanguagesResponse;
 import kodlama.io.Kodlama.io.Devs.dataAccess.abstracs.LanguageRepository;
 import kodlama.io.Kodlama.io.Devs.entities.concretes.Language;
 
 @Service
 public class LanguageManager implements LanguageService {
+	
 		private LanguageRepository languageRepository;
 	
 		
@@ -18,61 +26,55 @@ public class LanguageManager implements LanguageService {
 	public LanguageManager(LanguageRepository languageRepository) {
 			this.languageRepository = languageRepository;
 		}
-
+	
+	
 	@Override
-	public void add(Language language) {
-		try {
-			if(isLanguageExist(language)) throw new Exception("İsimler tekrar edilemez.");
-			if(isLanguageEmpty(language)) throw new Exception("Programlama dili boş geçilemez!");
-
-			languageRepository.add(language);
-		} catch (Exception exception) {
-			// TODO: handle exception
+	public List<GetAllLanguagesResponse> getAll() {
+		List<Language> languages = languageRepository.findAll();
+		List<GetAllLanguagesResponse> languagesResponse = new ArrayList<GetAllLanguagesResponse>();
+		
+		for (Language language : languages) {
+			GetAllLanguagesResponse responseItem = new GetAllLanguagesResponse();
+			responseItem.setId(language.getId());
+			responseItem.setName(language.getName());
+			languagesResponse.add(responseItem);
 		}
-	}
-
-	@Override
-	public void delete(int id) {
-		// TODO Auto-generated method stub
-		 languageRepository.delete(id);
-	}
-
-	@Override
-	public void update(Language language) {
-		for (Language languages : languageRepository.getAll()) {
-			if(languages.getName().equals(language.getName())) {
-				System.out.println("İsimler tekrar edilemez.");
-			}
-			if(languages.getName().isEmpty()) {
-				System.out.println("Programlama dili boş geçilemez!");
-			}
-		}
-		languageRepository.update(language);
-	}
-
-	@Override
-	public List<Language> getAll() {
-		// TODO Auto-generated method stub
-		return languageRepository.getAll();
-	}
-
-	@Override
-	public Language getById(int id) {
-		return languageRepository.getById(id);
+		return languagesResponse;
+		
+		
 	}
 	
-	private boolean isLanguageExist(Language language){
-        for (Language languages : this.languageRepository.getAll()){
-            if (languages.getName().equals(language.getName())){
-                return true;
-            }
-        }
-        return false;
-    }
+	@Override
+	public GetByIdLanguagesResponse getById(int id) {
+		Optional<Language> Language = languageRepository.findById(id);
+		GetByIdLanguagesResponse responseItem = new GetByIdLanguagesResponse();
+		responseItem.setName(Language.get().getName());
+		return responseItem;
+	}
+	
+	@Override
+	public void add(CreateLanguageRequest createLanguageRequest) throws Exception{
+		
+		Language language =  new Language();
+		language.setName(createLanguageRequest.getName());
+		this.languageRepository.save(language);
+		
+	}
+	
+	@Override
+	public void update(UpdateLanguageRequest updateLanguageRequest) throws Exception {
+		Language language = languageRepository.findById(updateLanguageRequest.getId()).get();
+		language.setId(updateLanguageRequest.getId());
+		language.setName(updateLanguageRequest.getName());	
+		languageRepository.save(language);
+	}
+	
 
-    private boolean isLanguageEmpty(Language language){
-    	return language.getName().isEmpty();
-    }
+	@Override
+	public void delete(DeleteLanguageRequest deleteLanguageRequest)  throws Exception {
+		Language language = languageRepository.findById(deleteLanguageRequest.getId()).get();
+		 languageRepository.delete(language);
+	}
 
 
 }

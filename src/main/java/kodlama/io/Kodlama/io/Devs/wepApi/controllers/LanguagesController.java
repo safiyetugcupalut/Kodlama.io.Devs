@@ -4,11 +4,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kodlama.io.Kodlama.io.Devs.business.abstracts.LanguageService;
-import kodlama.io.Kodlama.io.Devs.entities.concretes.Language;
+import kodlama.io.Kodlama.io.Devs.business.requests.CreateLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.requests.DeleteLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.requests.UpdateLanguageRequest;
+import kodlama.io.Kodlama.io.Devs.business.responses.GetAllLanguagesResponse;
+import kodlama.io.Kodlama.io.Devs.business.responses.GetByIdLanguagesResponse;
 
 @RestController
 @RequestMapping("/api/languages")
@@ -20,29 +25,30 @@ public class LanguagesController {
 		this.languageService = languageService;
 	}
 	
-	@GetMapping("/add")
-	public void add(Language language){
-			 languageService.add(language);		
+	@PostMapping("/delete")
+	public void delete(DeleteLanguageRequest deleteLanguageRequest) throws Exception{
+		 languageService.delete(deleteLanguageRequest);		
 	}
 	
-	@GetMapping("/delete")
-	public void delete(int id){
-		 languageService.delete(id);		
-	}
-	
-	@GetMapping("/update")
-	public void update(Language language) throws Exception {
-		 languageService.update(language);		
+	@PostMapping("/update")
+	public void update(UpdateLanguageRequest updateLanguageRequest) throws Exception {
+		 languageService.update(updateLanguageRequest);		
 	}
 	
 	@GetMapping("/getAll")
-	public List<Language> getAll(){
+	public List<GetAllLanguagesResponse> getAll(){
 		return languageService.getAll();		
 	}
 	
 	@GetMapping("/getById")
-	public Language getById(int id){
+	public GetByIdLanguagesResponse  getById(int id){
 		return languageService.getById(id);		
 	}
+	
+	@PostMapping("/add")
+	public void add(CreateLanguageRequest createLanguageRequest) throws Exception {
+		this.languageService.add(createLanguageRequest);
+	}
+	
 		
 }

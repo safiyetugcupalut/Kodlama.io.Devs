@@ -1,14 +1,13 @@
 package kodlama.io.Kodlama.io.Devs.entities.concretes;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -16,23 +15,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Table(name = "languages")
+@Table (name = "technology")
 @Getter
 @Setter
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Language {
-	    
+
+public class Technology {
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    @Column(name = "id", nullable = false)
+	    @Column(name = "id")
 		private int id;
 	    
 	    @Column(name = "name")
 		private String name;
 	    
-	    @OneToMany(mappedBy = "language",fetch = FetchType.LAZY)
-		private List<Technology> technologies;
-		
+	    @ManyToOne(fetch = FetchType.LAZY)
+	    @JoinColumn(name = "LanguageId")
+	    private Language language;
 }
